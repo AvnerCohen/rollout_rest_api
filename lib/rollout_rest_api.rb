@@ -40,6 +40,10 @@ class RolloutRestAPI < Sinatra::Base
     "ok"
   end
 
+  get "/:feature" do
+    rollout.active?(params[:feature], FakeUser.new(params[:user])).to_s
+  end
+
   private
     def rollout
       self.class.rollout

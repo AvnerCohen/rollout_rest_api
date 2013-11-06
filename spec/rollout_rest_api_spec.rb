@@ -42,7 +42,7 @@ describe "RolloutRestApi" do
   it "adds a user" do
     put "/chat/users", :user => 129315
     last_response.should be_ok
-    @rollout.get(:chat).users.should include(129315)
+    @rollout.get(:chat).users.should include("129315")
   end
 
   it "removes a user" do
@@ -51,8 +51,18 @@ describe "RolloutRestApi" do
 
     delete "/chat/users", :user => 129315
     last_response.should be_ok
-    @rollout.get(:chat).users.should == [1]
+    @rollout.get(:chat).users.should == ["1"]
   end
+
+  it "returns correct feature state for a user" do
+    @rollout.activate_user(:chat, FakeUser.new(1))
+
+    get "/chat", :user => 1233
+    last_response.body.should eq("false")
+
+    get "/chat", :user => 1
+    last_response.body.should eq("true")
+  end  
 
   it "sets the percentage" do
     put "/chat/percentage", :percentage => 22
